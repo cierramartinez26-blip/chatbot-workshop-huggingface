@@ -1,10 +1,13 @@
 import os
 os.environ["TIKTOKEN_CACHE_DIR"] = "/tmp"
-import time
+from typing import List, Optional
 import streamlit as st
 from llama_index.llms.gemini import Gemini
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader, Settings
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
+from llama_index.llms.huggingface import HuggingFaceLLM
+from llama_index.llms.huggingface_api import HuggingFaceInferenceAPI
+
 
 from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from google.genai.types import EmbedContentConfig
@@ -41,33 +44,15 @@ def load_data():
     )
 
     
-    Settings.llm = Gemini(
-        model="models/gemini-2.5-flash",
-        temperature=1.0,
-        system_prompt="""You are an expert on the work of Rabindrath Tagore.
-        Answer the question using the provided documents, which contain relevant excerpts from the work of Rabindrath Tagore.
-        The context for all questions is the work of Rabindrath Tagore. Whenver possible, include a quotation from the provided excerpts of his work to illustrate your point.
-        Respond using a florid but direct tone, typical of an early modernist writer.
-        Keep your answers under 100 words.""",
-        api_key = st.secrets.google_gemini_key,
-        safe = [
-    {
-        "category": "HARM_CATEGORY_HARASSMENT",
-        "threshold": "BLOCK_ONLY_HIGH",
-    },
-    {
-        "category": "HARM_CATEGORY_HATE_SPEECH",
-        "threshold": "BLOCK_ONLY_HIGH",
-    },
-    {
-        "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-        "threshold": "BLOCK_ONLY_HIGH",
-    },
-    {
-        "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-        "threshold": "BLOCK_ONLY_HIGH",
-    },
-],
+    Settings.llm = HuggingFaceInferenceAPI(
+    model_name="deepseek-ai/DeepSeek-R1-0528",
+    token=secrets.hftoken,
+    provider="auto",  # this will use the best provider available
+    system_prompt="""You are an expert on the work of Rabindrath Tagore.
+    Answer the question using the provided documents, which contain relevant excerpts from the work of Rabindrath Tagore.
+    The context for all questions is the work of Rabindrath Tagore. Whenver possible, include a quotation from the provided excerpts of his work to illustrate your point.
+    Respond using a florid but direct tone, typical of an early modernist writer.
+    Keep your answers under 100 words.""",
     )
     index = VectorStoreIndex.from_documents(docs)
     return index
