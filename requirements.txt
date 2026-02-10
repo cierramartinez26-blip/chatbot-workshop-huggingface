@@ -1,5 +1,7 @@
 streamlit
 sentence-transformers
+transformers[torch]
+huggingface_hub[inference]
 llama-index
 llama-index-embeddings-huggingface
 llama-index-llms-gemini
