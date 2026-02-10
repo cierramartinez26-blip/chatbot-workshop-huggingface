@@ -88,7 +88,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
                 except Exception as e: 
                     st.error("We hit a bump - let's try again " + str(e))
                     try:
-                        resp = st.session_state.chat_engine.chat(prompt)[0]
+                        resp = st.session_state.chat_engine.chat(prompt)
                         st.write(resp)
                     except Exception as e: 
                         st.error("We got an error from Hugging Face - this can happen for a few different reasons. Consider asking the question in a different way. " + str(e))
